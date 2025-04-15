@@ -78,11 +78,11 @@
       <div class="result">
         <div class="result-item">
           <span class="result-label">고등학교 필요량</span>
-          <span class="result-value">{{ highSchoolAmount }}g</span>
+          <span class="result-value">{{ highSchoolAmount }}kg</span>
         </div>
         <div class="result-item">
           <span class="result-label">중학교 필요량</span>
-          <span class="result-value">{{ middleSchoolAmount }}g</span>
+          <span class="result-value">{{ middleSchoolAmount }}kg</span>
         </div>
       </div>
     </div>
@@ -119,12 +119,12 @@ const middleSchool = computed(() => {
 
 const highSchoolAmount = computed(() => {
   if (!highSchool.value || !peoplePerGroup.value) return 0
-  return (Number(highSchool.value) * Number(peoplePerGroup.value)).toFixed(1)
+  return ((Number(highSchool.value) * Number(peoplePerGroup.value)) / 1000).toFixed(1)
 })
 
 const middleSchoolAmount = computed(() => {
   if (!middleSchool.value || !peoplePerGroup.value) return 0
-  return (Number(middleSchool.value) * Number(peoplePerGroup.value)).toFixed(1)
+  return ((Number(middleSchool.value) * Number(peoplePerGroup.value)) / 1000).toFixed(1)
 })
 
 const calculate = () => {
