@@ -84,6 +84,10 @@
         </div>
       </div>
     </div>
+
+    <div class="reset-button-container">
+      <button class="reset-button" @click="reset">초기화</button>
+    </div>
   </div>
 </template>
 
@@ -93,6 +97,12 @@ import { ref, computed } from 'vue'
 const totalPeople = ref('')
 const bags = ref('')
 const highSchool = ref('')
+
+const reset = () => {
+  totalPeople.value = ''
+  bags.value = ''
+  highSchool.value = ''
+}
 
 const showDivisionResult = computed(() => {
   return totalPeople.value && bags.value && 
@@ -224,6 +234,26 @@ const middleSchoolDivision = computed(() => {
     color: #333;
     margin-bottom: 1.5rem;
     text-align: center;
+  }
+}
+
+.reset-button-container {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.reset-button {
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #299d8e;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #299d8e;
   }
 }
 

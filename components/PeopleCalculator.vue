@@ -2,23 +2,6 @@
   <div class="calculator">
     <div class="input-group">
       <label>
-        <span class="label-text">총인원</span>
-        <div class="input-wrapper">
-          <input 
-            type="number" 
-            v-model="totalPeople" 
-            min="1" 
-            placeholder="총인원을 입력"
-            @input="calculate"
-            inputmode="numeric"
-          >
-          <span class="unit">명</span>
-        </div>
-      </label>
-    </div>
-
-    <div class="input-group">
-      <label>
         <span class="label-text">무게</span>
         <div class="input-wrapper">
           <input 
@@ -34,6 +17,23 @@
       </label>
     </div>
 
+    <div class="input-group">
+      <label>
+        <span class="label-text">총인원</span>
+        <div class="input-wrapper">
+          <input 
+            type="number" 
+            v-model="totalPeople" 
+            min="1" 
+            placeholder="총인원을 입력"
+            @input="calculate"
+            inputmode="numeric"
+          >
+          <span class="unit">명</span>
+        </div>
+      </label>
+    </div>
+
     <div class="result" v-if="showResult">
       <div class="result-item">
         <span class="result-label">1명당</span>
@@ -42,16 +42,32 @@
     </div>
 
     <div class="multiply-section" v-if="showResult">
-      <h3 class="section-title">그람 계산</h3>
+      <h3 class="section-title">학교별 계산</h3>
       <div class="input-group">
         <label>
-          <span class="label-text">인원수</span>
+          <span class="label-text">고등학교 인원</span>
           <div class="input-wrapper">
             <input 
               type="number" 
-              v-model="multiplyNumber" 
-              min="1" 
-              placeholder="인원수 입력"
+              v-model="highSchool" 
+              min="0" 
+              :max="totalPeople"
+              placeholder="고등학교 인원 입력"
+              inputmode="numeric"
+            >
+            <span class="unit">명</span>
+          </div>
+        </label>
+      </div>
+
+      <div class="input-group">
+        <label>
+          <span class="label-text">중학교 인원</span>
+          <div class="input-wrapper">
+            <input 
+              type="number" 
+              v-model="middleSchool" 
+              disabled
               inputmode="numeric"
             >
             <span class="unit">명</span>
@@ -61,22 +77,28 @@
 
       <div class="result">
         <div class="result-item">
-          <span class="result-label">필요한 양</span>
-          <span class="result-value">{{ totalAmount }}g</span>
+          <span class="result-label">고등학교 필요량</span>
+          <span class="result-value">{{ highSchoolAmount }}g</span>
+        </div>
+        <div class="result-item">
+          <span class="result-label">중학교 필요량</span>
+          <span class="result-value">{{ middleSchoolAmount }}g</span>
         </div>
       </div>
     </div>
+
+    <div class="reset-button-container">
+      <button class="reset-button" @click="reset">초기화</button>
+    </div>
   </div>
 </template>
-
-// ... existing code ...
 
 <script setup>
 import { ref, computed } from 'vue'
 
 const totalPeople = ref('')
 const groups = ref('')
-const multiplyNumber = ref('')
+const highSchool = ref('')
 
 const showResult = computed(() => {
   return totalPeople.value && groups.value && 
@@ -86,23 +108,36 @@ const showResult = computed(() => {
 
 const peoplePerGroup = computed(() => {
   if (!showResult.value) return 0
-  // Math.floor 대신 Number로 변경하고 소수점 첫째 자리까지 표시
   return (Number(groups.value) / Number(totalPeople.value)).toFixed(1)
 })
 
-const totalAmount = computed(() => {
-  if (!multiplyNumber.value) return 0
-  // 소수점이 포함된 계산을 위해 Number로 변환
-  return (Number(peoplePerGroup.value) * Number(multiplyNumber.value)).toFixed(1)
+const middleSchool = computed(() => {
+  if (!highSchool.value || !totalPeople.value) return ''
+  const middle = Number(totalPeople.value) - Number(highSchool.value)
+  return middle >= 0 ? middle : 0
+})
+
+const highSchoolAmount = computed(() => {
+  if (!highSchool.value || !peoplePerGroup.value) return 0
+  return (Number(highSchool.value) * Number(peoplePerGroup.value)).toFixed(1)
+})
+
+const middleSchoolAmount = computed(() => {
+  if (!middleSchool.value || !peoplePerGroup.value) return 0
+  return (Number(middleSchool.value) * Number(peoplePerGroup.value)).toFixed(1)
 })
 
 const calculate = () => {
   if (Number(totalPeople.value) < 0) totalPeople.value = '1'
   if (Number(groups.value) < 0) groups.value = '1'
 }
-</script>
 
-// ... existing code ...
+const reset = () => {
+  totalPeople.value = ''
+  groups.value = ''
+  highSchool.value = ''
+}
+</script>
 
 <style lang="scss" scoped>
 .calculator {
@@ -195,6 +230,26 @@ const calculate = () => {
     color: #333;
     margin-bottom: 1.5rem;
     text-align: center;
+  }
+}
+
+.reset-button-container {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.reset-button {
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #299d8e;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #299d8e;
   }
 }
 
